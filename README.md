@@ -25,7 +25,7 @@
 To Run Local Mongo DB
 ---------------
 1. `cd` into repo
-2. run command `cd ./server/mongo/ && mongod`
+2. run command `cd ./server/mongo/ && mongod --dbpath ./bin/data/db`
 
 To Run Local Node Server
 ------------------
