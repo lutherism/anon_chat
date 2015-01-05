@@ -9,25 +9,22 @@ define(["underscore", "backbone", "react", "stores", "dispatcher", "pathStore"],
   var MyRouter = Backbone.Router.extend({
     routes: {
       '': 'index',
-      ':notes': 'notes'
+      'thread/:id': 'thread',
+      'thread': 'thread'
     },
     index: function() {
-      dispatcher.dispatchRouteAction({
-        type: 'index',
-        concern: 'update',
-        data: {
-          route: 'index'
-        }
-      });
+      this.navigate('thread');
     },
-    notes: function() {
+    thread: function(id) {
       dispatcher.dispatchRouteAction({
-        type: 'notes',
-        concern: 'update',
+        type: 'thread',
+        concern: 'create',
         data: {
-          route: 'notes'
+          subId: id,
+          route: 'thread'
         }
       });
+
     }
   });
   return MyRouter;

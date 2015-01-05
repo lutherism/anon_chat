@@ -1,8 +1,10 @@
-define(['react', 'dispatcher', 'views/IndexView', 'stores', 'views/NoteListView'], function (
+define(['react', 'dispatcher', 'views/ThreadView', 'views/ThreadListView',
+  'stores'], function (
   React,
   dispatcher,
-  IndexView,
-  stores, NotesListView
+  ThreadView,
+  ThreadListView,
+  stores
   ) {
   var ViewManager = React.createClass({displayName: "ViewManager",
     componentDidMount: function(options) {
@@ -16,17 +18,20 @@ define(['react', 'dispatcher', 'views/IndexView', 'stores', 'views/NoteListView'
     },
     render: function() {
       var ret = React.createElement("h2", null, "404");
+      console.log(this.state);
       switch (this.state.route) {
-        case 'index':
-          ret = React.createElement(IndexView, null);
-          break;
-        case 'notes':
-          ret = React.createElement(NotesListView, null)
+        case 'thread':
+          if (this.state.subId) {
+            ret = React.createElement(ThreadView, {threadId: this.state.subId})
+          } else {
+            ret = React.createElement(ThreadListView, null)
+          }
       }
       return ret;
     },
     handlePathChange: function() {
       this.setState({
+        subId: stores.get('pathStore').get('subId'),
         route: stores.get('pathStore').get('route')
       });
     }

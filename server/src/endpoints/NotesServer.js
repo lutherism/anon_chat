@@ -18,7 +18,7 @@ var NotesServer = ServerGenerator.extend({
     return this.initialize.apply(this,arguments);
   },
   initialize: function(options) {
-    console.log('new server generator');
+    console.log('new ' + options.modelName + ' server');
     console.log(mongoose.connection);
     if (mongoose.connection.readyState !== 1) {
       this.isReady = false;
@@ -29,7 +29,7 @@ var NotesServer = ServerGenerator.extend({
         this.isReady = true;
       }.bind(this));
     }
-    this.modelName = options.modelName || notes;
+    this.modelName = options.modelName;
     this.dbModel = dbSpec.models['notes'];
     this.schema = mongoose.Schema(this.dbModel.schema)
     this.model = mongoose.model(this.dbModel.name, this.schema);

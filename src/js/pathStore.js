@@ -5,7 +5,7 @@ define(['backbone', 'dispatcher'], function (
   var PathStore = Backbone.Model.extend({
     initialize: function(options) {
       this.options = options || {};
-      dispatcher.register(this.dispatchHandler.bind(this));
+      this.dispatchId = dispatcher.register(this.dispatchHandler.bind(this));
     },
     dispatchHandler: function(payload) {
       if (payload.source === dispatcher.constants.ROUTE_SOURCE) {

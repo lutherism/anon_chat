@@ -10,21 +10,16 @@ function ServerGenerator() {
 
 ServerGenerator.prototype = {
   initialize: function(options) {
-    console.log('new server generator');
-    console.log(mongoose.connection);
-    if (mongoose.connection.readyState !== 1) {
-      this.isReady = false;
-      mongoose.connect('mongodb://localhost:27017');
-      console.log('connecting to DB...');
-      mongoose.connection.on('open', function() {
-        console.log('connected to DB');
-        this.isReady = true;
-      }.bind(this));
-    }
+    console.log('new ' + options.modelName + ' server.');
     this.modelName = options.modelName;
     this.dbModel = dbSpec.models[this.modelName];
-    this.schema = mongoose.Schema(this.dbModel.schema)
-    this.model = mongoose.model(this.dbModel.name, this.schema);
+    this.schema = new mongoose.Schema(this.dbModel.schema);
+    if (mongoose.modelNames().indexOf(this.dbModel.name) === -1) {
+      this.model = mongoose.model(this.dbModel.name, this.schema);
+    } else {
+      this.model = mongoose.model(this.dbModel.name);
+      console.log('model exists', this.model);
+    }
     return this;
   },
   createServer: function() {
@@ -36,7 +31,7 @@ ServerGenerator.prototype = {
       data += buff.toString();
     });
     req.once('end', function() {
-      callback(null, JSON.parse(data||"{}"));
+      callback(req, JSON.parse(data||"{}"));
     });
   },
   defaultGatherData: function(req, reqData, callback) {
@@ -71,10 +66,7 @@ ServerGenerator.prototype = {
   isValidRequest: function() {
     return true;
   },
-  errors: [
-    'no errors',
-    'so far...'
-  ],
+  errors: [],
   serve: function(gatherDataFn) {
     return (function(req, resp) {
       if (this.isReady) {

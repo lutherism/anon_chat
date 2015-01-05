@@ -5,7 +5,6 @@ var gulp = require('gulp'),
   path = require('path'),
   watch = require('gulp-watch');
   fs = require('fs');
-  console.log(env);
 
 gulp.task('requirejsBuild', function() {
     var fileStream = fs.createWriteStream('./build/app.js');
@@ -24,8 +23,13 @@ gulp.task('buildReactJS', function() {
 });
 
 gulp.task('watchJSX', function () {
+    var reactEngine = gulpReact();
+    reactEngine.on('error', function(err) {
+      console.log(err.message);
+      console.log(err.fileName);
+    });
     gulp.src('./src/jsx/*.jsx')
         .pipe(watch('./src/jsx/*.jsx'))
-        .pipe(gulpReact())
+        .pipe(reactEngine)
         .pipe(gulp.dest('./src/js/views/'));
 });

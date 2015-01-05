@@ -14,10 +14,10 @@ var mimeTypes = {
   };
 
 module.exports = function server(req, resp) {
-        var uri = url.parse(req.url).pathname;
+        var uri = url.parse(req.url).pathname,
+          t = Date.now();
         if (uri === '/') uri = path.join(uri, 'src/html/index.html');
         var filename = path.join(process.cwd(), '..', uri);
-        console.log(uri);
         var mimeType = mimeTypes[uri.split(".")[1]];
         resp.writeHead(200, {
           'Content-Type': mimeType
@@ -37,4 +37,7 @@ module.exports = function server(req, resp) {
           resp.write("404");
           resp.end();
         }
+        resp.once('finish', function() {
+          console.log([(Date.now()-t), 'ms', req.method, req.url].join(' '));
+        });
       };
