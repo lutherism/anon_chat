@@ -1,31 +1,28 @@
-define(["react", "stores", "views/CommentView", "views/ThreadActions",
-  "views/ThreadRowView", "dispatcher"], function(
-    React, stores, CommentView, ThreadActions, ThreadRowView, dispatcher
+define(["react", "views/CommentView", "views/ThreadActions",
+  "views/ThreadRowView", "dispatcher", "views/WatchStores", "stores"], function(
+    React, CommentView, ThreadActions, ThreadRowView, dispatcher, WatchStores,
+    stores
   ) {
   var ThreadListView = React.createClass({
+    mixins: [WatchStores],
     getInitialState: function() {
       return {
         loading: true,
         threads: []
       }
     },
-    componentDidMount: function(options) {
-      stores.getThreads().on('change:emit', this.handleThreadsChange);
-      stores.getThreads().fetch();
-    },
-    handleThreadsChange: function() {
-      this.setState({
-        threads:  stores.getThreads().toJSON(),
-        loading: false
-      });
+    _watchStores: function() {
+      return [
+        stores.getThreads()
+      ]
     },
     render: function() {
-      var threads = stores.getThreads();
+      var threads = stores.getThreads().toJSON();
       if (threads) {
         return (<div className="container">
           <ul className="thread-list">
           {
-            this.state.threads.map(function(thread, i) {
+            threads.map(function(thread, i) {
               return thread._id?
                 <ThreadRowView thread={thread} key={i} />:null;
             })
@@ -47,23 +44,3 @@ define(["react", "stores", "views/CommentView", "views/ThreadActions",
   });
   return ThreadListView;
 });
-
-
-function escapeHtml(unsafe) {
-    return unsafe
-         .split(/&/g).join("&amp;")
-         .split(/</g).join("&lt;")
-         .split(/>/g).join("&gt;")
-         .split(/"/g).join("&quot;")
-         .split(/'/g).join("&#039;");
- }
-
-function unescapeHtml(safe) {
-    return safe
-         .split("&amp;").join("&")
-         .split("&lt;").join("<")
-         .split("&gt;").join(">")
-         .split("&quot;").join('"')
-         .split("&#039;").join("'");
- }
-

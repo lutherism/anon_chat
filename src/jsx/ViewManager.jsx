@@ -1,15 +1,16 @@
 define(['react', 'dispatcher', 'views/ThreadView', 'views/ThreadListView',
-  'stores'], function (
+  'stores', 'views/WatchStores'], function (
   React,
   dispatcher,
   ThreadView,
   ThreadListView,
-  stores
+  stores,
+  WatchStores
   ) {
   var ViewManager = React.createClass({
-    componentDidMount: function(options) {
-      this.el = 'body';
-      stores.get('pathStore').on('change:emit', this.handlePathChange, this);
+    mixins: [WatchStores],
+    _watchStores: function() {
+      return [stores.get('pathStore')];
     },
     getInitialState: function() {
       return {
@@ -19,21 +20,15 @@ define(['react', 'dispatcher', 'views/ThreadView', 'views/ThreadListView',
     render: function() {
       var ret = <h2>404</h2>;
       console.log(this.state);
-      switch (this.state.route) {
+      switch (stores.get('pathStore').get('route')) {
         case 'thread':
-          if (this.state.subId) {
-            ret = <ThreadView threadId={this.state.subId} />
+          if (stores.get('pathStore').get('subId')) {
+            ret = <ThreadView threadId={stores.get('pathStore').get('subId')} />
           } else {
             ret = <ThreadListView />
           }
       }
       return ret;
-    },
-    handlePathChange: function() {
-      this.setState({
-        subId: stores.get('pathStore').get('subId'),
-        route: stores.get('pathStore').get('route')
-      });
     }
   });
   return ViewManager;

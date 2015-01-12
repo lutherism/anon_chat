@@ -2,9 +2,8 @@ var Router = require('router'),
   ServerGenerator = require('../ServerGenerator'),
   ThreadDAO = require('../dao/ThreadDAO'),
   apiUtils = require('../apiUtils'),
-  CommentDAO = require('../dao/CommentDAO');
-
-
+  CommentDAO = require('../dao/CommentDAO'),
+  NodeBL = require('../bl/NodeBL');
 
 function threadRouter(router) {
   router.param('_id', function(req, resp, next, _id) {
@@ -24,13 +23,14 @@ function threadRouter(router) {
             if (err) { resp.writeHead(505); resp.end();
             } else {
               resp.writeHead(200, apiUtils.successHeaders);
-              resp.write(JSON.stringify(models[0]));
+              resp.write(JSON.stringify(models));
               resp.end();
             }
           });
         });
         break;
       default:
+      console.log('routed to get thread')
         ThreadDAO.getCollection(function(err, models) {
           if (err) { resp.writeHead(505); resp.end();
           } else {
@@ -85,10 +85,22 @@ function threadRouter(router) {
     }
   });
 
-  function returnWithChildren(id, callback) {
-    serverGen.model.find({parentId: id}, callback);
-  }
+  router.route('/thread/:_id/tree').all(function(req, resp) {
+    NodeBL.buildWeightedGraph(req.id+'/thread', 'child_comments',
+      5, .9, function(err, graph) {
+        if (err) {
+          resp.writeHead(505); resp.end();
+        } else {
+          resp.writeHead(200, apiUtils.successHeaders);
+          resp.write(JSON.stringify(graph));
+          resp.end();
+        }
+      });
+  });
 
+  function returnWithChildren(id, callback) {
+    NodeBL.buildWeightedGraph(id+'/thread', 'child_comments', 50, .9, callback);
+  }
 }
 
 module.exports = threadRouter;

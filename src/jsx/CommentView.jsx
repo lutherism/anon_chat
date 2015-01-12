@@ -1,6 +1,6 @@
-define(["react", "stores", "views/CommentView",
+define(["react", "views/CommentView",
   "views/CommentActions", "markdown"], function(
-    React, stores, CommentView, CommentActions) {
+    React, CommentView, CommentActions) {
   var CommentView = React.createClass({
     getInitialState: function() {
       return {

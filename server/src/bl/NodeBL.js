@@ -45,7 +45,7 @@ var NodeBL = {
   */
   buildWeightedGraph: function(root, type, z, layerDim, callback) {
     var nodeStack = [{
-        id: root,
+        _id: root,
         weight: 1
       }],
       graph = {
@@ -53,29 +53,33 @@ var NodeBL = {
         root: root
       };
     (function chewStack() {
-      var newNode = nodeQueue.pop();
+      var newNode = nodeStack.pop();
       graph.size++;
-      graph[newNode.id] = newNode;
+      graph[newNode._id] = newNode;
       //Find it's kids
-      EdgesDAO.targetNodes([newNode.id, type].join(','),
+      console.log('query for ', [newNode._id, type].join('/'));
+      EdgesDAO.targetNodes([newNode._id, type].join('/'),
         function(parent, err, models) {
           //factor weights down by parent weight
           models = models.map(function(x) {
+            console.log('found', x.id);
+            x.weight = x.weight || 1;
+            x._id = x.id;
             x.weight *= (graph[parent].weight * layerDim);
             return x;
           });
-          graph[id].targets = models;
-          //add found kids to node stack and sort by weights
-          nodeQueue = nodeQueue.concat(models)
-            .sort(function(a,b) {
-              return (a.weight > b.weight ? 1 : (a.weight < b.weight ? -1 : 0));
-            });
-          if (nodeQueue.length === 0 || graph.size >= z) {
+            graph[parent].targets = models;
+            //add found kids to node stack and sort by weights
+            nodeStack = nodeStack.concat(models)
+              .sort(function(a,b) {
+                return (a.weight > b.weight ? 1 : (a.weight < b.weight ? -1 : 0));
+              });
+          if (nodeStack.length === 0 || graph.size >= z) {
             callback(err, graph);
           } else {
             chewStack();
           }
-        }.bind(this, newNode.id));
+        }.bind(this, newNode._id));
     })();
   }
 };

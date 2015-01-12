@@ -1,5 +1,5 @@
-define(["react", "stores", "dispatcher", "markdown"], function(
-    React, stores, dispatcher
+define(["react", "dispatcher", "markdown"], function(
+    React, dispatcher
   ) {
   var ThreadActions = React.createClass({displayName: "ThreadActions",
     getInitialState: function() {

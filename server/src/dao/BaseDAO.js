@@ -29,6 +29,7 @@ BaseDAO.prototype = {
   },
   getCollection: function(callback) {
     var filter = null;
+    console.log('getting coll', this.modelName);
     this.model.find(filter, callback);
   },
   getById: function(id, callback) {

@@ -1,5 +1,5 @@
-define(["react", "stores", "dispatcher"], function(
-    React, stores, dispatcher
+define(["react", "dispatcher"], function(
+    React, dispatcher
   ) {
   var ThreadActions = React.createClass({
     getInitialState: function() {
@@ -7,9 +7,6 @@ define(["react", "stores", "dispatcher"], function(
         replying: false,
         bodyText: ""
       }
-    },
-    handleThreadEmit: function() {
-
     },
     reply: function() {
       this.setState({

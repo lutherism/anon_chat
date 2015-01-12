@@ -35,8 +35,9 @@ function CommentRouter(router, endpointName) {
         });
         break;
       default:
-        console.log(typeof url.parse(req.url, true).query);
-        CommentDAO.find(url.parse(req.url, true).query,
+        console.log(url.parse(req.url, true).query.q);
+        CommentDAO.find(
+          JSON.parse(url.parse(req.url, true).query.q),
           function(err, models) {
           console.log('found', models);
           if (err) {resp.writeHead(500, null); resp.end();

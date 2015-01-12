@@ -1,6 +1,6 @@
-define(["react", "stores", "views/CommentView", "views/ThreadActions",
+define(["react", "views/CommentView", "views/ThreadActions",
   "dispatcher"], function(
-    React, stores, CommentView, ThreadActions, dispatcher) {
+    React, CommentView, ThreadActions, dispatcher) {
   var ThreadRowView = React.createClass({displayName: "ThreadRowView",
     getInitialState: function() {
       return {
